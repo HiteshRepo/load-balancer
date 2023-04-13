@@ -1,0 +1,23 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: rest-simple-app
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: rest-simple-app
+  template:
+    metadata:
+      labels:
+        app: rest-simple-app
+    spec:
+      containers:
+        - name: rest-simple-app
+          image: hiteshpattanayak/rest-simple-app:1.0
+          imagePullPolicy: Always
+          env:
+            - name: POD_NAME
+              valueFrom:
+                fieldRef:
+                  fieldPath: metadata.name

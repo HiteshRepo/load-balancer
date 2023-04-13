@@ -1,0 +1,23 @@
+version: "3"
+
+tasks:
+  compile-app:
+    cmds:
+      - go build -a -o ./build/out/app cmd/main.go
+
+  deps:
+    cmds:
+      - go mod download
+
+  clean:
+    cmds:
+      - go clean -testcache
+      - rm -rf ./build/out
+
+  package-app:
+    cmds:
+      - docker build --file build/Dockerfile -t hiteshpattanayak/rest-simple-app:1.0 .
+
+  publish-app:
+    cmds:
+      - docker push hiteshpattanayak/rest-simple-app:1.0
