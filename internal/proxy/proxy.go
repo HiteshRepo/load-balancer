@@ -6,17 +6,21 @@ import (
 	"net/url"
 	"sync/atomic"
 	"time"
+
+	"github.com/hiteshrepo/load-balancer/internal/proxy/health"
 )
+
+type Proxy struct {
+	proxy  *httputil.ReverseProxy
+	health *health.ProxyHealth
+	load   int32
+}
 
 func NewProxy(addr *url.URL) *Proxy {
 	return &Proxy{
-		proxy: httputil.NewSingleHostReverseProxy(addr),
+		proxy:  httputil.NewSingleHostReverseProxy(addr),
+		health: health.NewProxyHealth(addr),
 	}
-}
-
-type Proxy struct {
-	proxy *httputil.ReverseProxy
-	load  int32
 }
 
 func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
@@ -28,4 +32,12 @@ func (p *Proxy) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 
 func (p *Proxy) GetLoad() int32 {
 	return atomic.LoadInt32(&p.load)
+}
+
+func (p *Proxy) IsAvailable() bool {
+	return p.health.IsAvailable()
+}
+
+func (p *Proxy) SetHealthCheck(check func(addr *url.URL) bool, period time.Duration) {
+	p.health.SetHealthCheck(check, period)
 }

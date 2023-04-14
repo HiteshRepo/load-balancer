@@ -116,3 +116,65 @@ Note: does not matter how many times you hit the proxy, request is redirected to
 Can you spot the issue in the code in the branch 'setup-proxy'?
 What we have achieved though is to setup a proxy that redirects the request to the pod(s) behind it.
 Now we would like to move on to achieve load balancing!!
+
+6. Before we move on to load balancing, lets setup periodic health check of the urls we add behind our proxy
+
+the proxy app's image 'hiteshpattanayak/proxy-app:2.0' has the health check feature setup.
+Also the image has been updated in 'proxyApp-deploy.yaml'.
+
+Deploy the latest proxy app
+```bash
+kubectl apply -f proxyApp-deploy.yaml
+
+deployment.apps/proxy-app configured
+
+kubectl get po -l app=proxy-app
+
+NAME                        READY   STATUS    RESTARTS   AGE
+proxy-app-555465b5b-xwz42   2/2     Running   0          29s
+```
+
+7. Repeat the 'addUrl' requests again
+
+```bash
+curl 10.110.72.7:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://10.244.0.32:9090"}' -w "\n"
+proxy registered
+
+curl 10.110.72.7:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://10.244.0.31:9090"}' -w "\n"
+proxy registered
+
+curl 10.110.72.7:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://10.244.0.30:9090"}' -w "\n"
+proxy registered
+
+## adding an invalid url
+curl 10.110.72.7:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://1.2.3.4:9090"}' -w "\n"
+proxy registered
+```
+
+8. check logs of the proxy app pod
+```bash
+kubectl logs -f proxy-app-555465b5b-xwz42 -c proxy-app
+
+[GIN] 2023/04/14 - 18:32:10 | 200 |     744.334µs |       127.0.0.1 | POST     "/addurl"
+14047-09+00 47:23:23 -> url(http://10.244.0.32:9090) is available.
+[GIN] 2023/04/14 - 18:32:10 | 200 |      752.32µs |       127.0.0.1 | POST     "/addurl"
+14047-09+00 47:23:23 -> url(http://10.244.0.30:9090) is available.
+[GIN] 2023/04/14 - 18:32:10 | 200 |     298.483µs |       127.0.0.1 | POST     "/addurl"
+14047-09+00 47:23:23 -> url(http://1.2.3.4:9090) is unavailable.
+[GIN] 2023/04/14 - 18:32:11 | 200 |     358.927µs |       127.0.0.1 | POST     "/addurl"
+14047-09+00 47:23:23 -> url(http://10.244.0.31:9090) is available.
+14047-09+00 47:23:23 -> url(http://10.244.0.32:9090) is available.
+14047-09+00 47:23:23 -> url(http://10.244.0.30:9090) is available.
+14047-09+00 47:23:23 -> url(http://1.2.3.4:9090) is unavailable.
+14047-09+00 47:23:23 -> url(http://10.244.0.31:9090) is available.
+14047-09+00 47:23:23 -> url(http://10.244.0.32:9090) is available.
+14047-09+00 47:23:23 -> url(http://10.244.0.30:9090) is available.
+14047-09+00 47:23:23 -> url(http://1.2.3.4:9090) is unavailable.
+14047-09+00 47:23:23 -> url(http://10.244.0.31:9090) is available.
+14047-09+00 47:23:23 -> url(http://10.244.0.32:9090) is available.
+14047-09+00 47:23:23 -> url(http://10.244.0.30:9090) is available.
+14047-09+00 47:23:23 -> url(http://1.2.3.4:9090) is unavailable.
+14047-09+00 47:23:23 -> url(http://10.244.0.31:9090) is available.
+14047-09+00 47:23:23 -> url(http://10.244.0.32:9090) is available.
+14047-09+00 47:23:23 -> url(http://10.244.0.30:9090) is available.
+```

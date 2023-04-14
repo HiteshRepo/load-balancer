@@ -28,8 +28,8 @@ tasks:
 
   package-proxyApp:
     cmds:
-      - docker build --file build/Dockerfile.proxyApp -t hiteshpattanayak/proxy-app:1.0 .
+      - docker build --file build/Dockerfile.proxyApp -t hiteshpattanayak/proxy-app:2.0 .
 
   publish-proxyApp:
     cmds:
-      - docker push hiteshpattanayak/proxy-app:1.0
+      - docker push hiteshpattanayak/proxy-app:2.0
