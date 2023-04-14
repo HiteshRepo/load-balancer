@@ -1,0 +1,18 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: proxy-app
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: proxy-app
+  template:
+    metadata:
+      labels:
+        app: proxy-app
+    spec:
+      containers:
+        - name: proxy-app
+          image: hiteshpattanayak/proxy-app:1.0
+          imagePullPolicy: Always
