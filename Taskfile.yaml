@@ -1,10 +1,6 @@
 version: "3"
 
 tasks:
-  compile-restSimpleApp:
-    cmds:
-      - go build -a -o ./build/out/restSimpleApp cmd/restSimpleApp/main.go
-
   deps:
     cmds:
       - go mod download
@@ -14,10 +10,26 @@ tasks:
       - go clean -testcache
       - rm -rf ./build/out
 
+  compile-restSimpleApp:
+    cmds:
+      - go build -a -o ./build/out/restSimpleApp cmd/restSimpleApp/main.go
+
   package-restSimpleApp:
     cmds:
-      - docker build --file build/Dockerfile -t hiteshpattanayak/rest-simple-app:2.0 .
+      - docker build --file build/Dockerfile.restSimpleApp -t hiteshpattanayak/rest-simple-app:2.0 .
 
   publish-restSimpleApp:
     cmds:
       - docker push hiteshpattanayak/rest-simple-app:2.0
+
+  compile-proxyApp:
+    cmds:
+      - go build -a -o ./build/out/proxyApp cmd/proxyApp/main.go
+
+  package-proxyApp:
+    cmds:
+      - docker build --file build/Dockerfile.proxyApp -t hiteshpattanayak/proxy-app:1.0 .
+
+  publish-proxyApp:
+    cmds:
+      - docker push hiteshpattanayak/proxy-app:1.0
