@@ -10,13 +10,13 @@ go install github.com/go-task/task/v3/cmd/task@latest
 cd ../load-balancer
 ```
 
-3. compile, package and publish app:
+3. compile, package and publish restSimpleApp:
 ```bash
-task compile-app
+task compile-restSimpleApp
 
-task package-app
+task package-restSimpleApp
 
-task publish-app
+task publish-restSimpleApp
 ```
 
 Note: skip steps #1, #2 and #3 since, the app's image has already been pushed to dockerhub.
@@ -25,7 +25,7 @@ Note: skip steps #1, #2 and #3 since, the app's image has already been pushed to
 
 5. Deploy the app
 ```bash
-kubectl create -f build/app-deploy.yaml
+kubectl create -f build/restSimpleApp-deploy.yaml
 ```
 
 6. Get the pods

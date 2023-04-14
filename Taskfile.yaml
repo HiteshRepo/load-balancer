@@ -1,9 +1,9 @@
 version: "3"
 
 tasks:
-  compile-app:
+  compile-restSimpleApp:
     cmds:
-      - go build -a -o ./build/out/app cmd/main.go
+      - go build -a -o ./build/out/restSimpleApp cmd/restSimpleApp/main.go
 
   deps:
     cmds:
@@ -14,10 +14,10 @@ tasks:
       - go clean -testcache
       - rm -rf ./build/out
 
-  package-app:
+  package-restSimpleApp:
     cmds:
-      - docker build --file build/Dockerfile -t hiteshpattanayak/rest-simple-app:1.0 .
+      - docker build --file build/Dockerfile -t hiteshpattanayak/rest-simple-app:2.0 .
 
-  publish-app:
+  publish-restSimpleApp:
     cmds:
-      - docker push hiteshpattanayak/rest-simple-app:1.0
+      - docker push hiteshpattanayak/rest-simple-app:2.0

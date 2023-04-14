@@ -14,7 +14,7 @@ spec:
     spec:
       containers:
         - name: rest-simple-app
-          image: hiteshpattanayak/rest-simple-app:1.0
+          image: hiteshpattanayak/rest-simple-app:2.0
           imagePullPolicy: Always
           env:
             - name: POD_NAME

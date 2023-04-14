@@ -11,8 +11,8 @@ RUN go install github.com/go-task/task/v3/cmd/task@latest
 COPY go.mod go.sum ./
 RUN go mod download
 COPY . .
-RUN task compile-app
+RUN task compile-restSimpleApp
 
 FROM alpine:3.14.2
-COPY --from=builder ./service/build/out/app app
-ENTRYPOINT ["./app"]
+COPY --from=builder ./service/build/out/restSimpleApp restSimpleApp
+ENTRYPOINT ["./restSimpleApp"]

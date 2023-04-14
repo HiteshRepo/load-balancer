@@ -5,11 +5,11 @@ import (
 	"os/signal"
 	"syscall"
 
-	"github.com/hiteshrepo/load-balancer/internal"
+	rsa "github.com/hiteshrepo/load-balancer/internal/restSimpleApp"
 )
 
 func main() {
-	app := internal.App{}
+	app := rsa.App{}
 
 	app.Start()
 
