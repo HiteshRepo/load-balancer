@@ -12,7 +12,7 @@ type RoundRobin struct {
 	current int32
 }
 
-func NewRoundRobin() *RoundRobin {
+func NewRoundRobin() LoadBalancer {
 	r := &RoundRobin{
 		proxies: make(types.CommonProxiesBunch, 0),
 		current: -1,

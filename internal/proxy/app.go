@@ -15,7 +15,7 @@ type backend struct {
 }
 
 type App struct {
-	r loadbalancers.RoundRobin
+	lb loadbalancers.LoadBalancer
 }
 
 func (a *App) Start() {
@@ -46,13 +46,13 @@ func (a *App) addproxy(c *gin.Context) {
 		return
 	}
 
-	a.r.Add(v)
+	a.lb.Add(v)
 
 	c.String(http.StatusOK, "proxy registered")
 }
 
 func (a *App) serveproxy(c *gin.Context) {
-	p, err := a.r.Next()
+	p, err := a.lb.Next()
 	if err != nil {
 		c.String(http.StatusServiceUnavailable, err.Error())
 		return
