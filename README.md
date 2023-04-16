@@ -34,23 +34,24 @@ kubectl create -f build/restSimpleApp/deploy.yaml
 
 6. Get the pods
 ```bash
-kubectl get po -o wide
+kubectl get po -l app=rest-simple-app -o wide
 
-rest-simple-app-964f5d5bd-q4m99             2/2     Running   0          20m     10.244.0.32    minikube   <none>           <none>
-rest-simple-app-964f5d5bd-q9jqm             2/2     Running   0          20m     10.244.0.30    minikube   <none>           <none>
-rest-simple-app-964f5d5bd-qmdrt             2/2     Running   0          20m     10.244.0.31    minikube   <none>           <none>
+NAME                               READY   STATUS    RESTARTS   AGE   IP           NODE                              NOMINATED NODE   READINESS GATES
+rest-simple-app-6c9dc776f5-gwnvq   2/2     Running   0          59s   10.244.0.4   eksabm-testbed1-core-dev-node-0   <none>           <none>
+rest-simple-app-6c9dc776f5-hkp7w   2/2     Running   0          59s   10.244.0.2   eksabm-testbed1-core-dev-node-0   <none>           <none>
+rest-simple-app-6c9dc776f5-vfnbx   2/2     Running   0          59s   10.244.0.3   eksabm-testbed1-core-dev-node-0   <none>           <none>
 ```
 
 7. Curl the pods using their IP and listening router port
 ```bash
-curl 10.244.0.32:9090 -w "\n"
-responding from a simple rest app with pod name: rest-simple-app-964f5d5bd-q4m99
+curl 10.244.0.4:9090 -w "\n"
+responding from a simple rest app with pod name: rest-simple-app-6c9dc776f5-gwnvq
 
-curl 10.244.0.31:9090 -w "\n"
-responding from a simple rest app with pod name: rest-simple-app-964f5d5bd-qmdrt
+curl 10.244.0.3:9090 -w "\n"
+responding from a simple rest app with pod name: rest-simple-app-6c9dc776f5-vfnbx
 
-curl 10.244.0.30:9090 -w "\n"
-responding from a simple rest app with pod name: rest-simple-app-964f5d5bd-q9jqm
+curl 10.244.0.2:9090 -w "\n"
+responding from a simple rest app with pod name: rest-simple-app-6c9dc776f5-hkp7w
 ```
 
 
@@ -76,8 +77,8 @@ kubectl create -f build/proxyApp/deploy.yaml
 
 kubectl get po -o wide -l app=proxy-app
 
-NAME                        READY   STATUS    RESTARTS   AGE   IP             NODE                              NOMINATED NODE   READINESS GATES
-proxy-app-784f88697-lnfj8   2/2     Running   0          22m   10.244.0.187   eksabm-testbed1-core-dev-node-0   <none>           <none>
+NAME                         READY   STATUS    RESTARTS   AGE    IP             NODE                              NOMINATED NODE   READINESS GATES
+proxy-app-6c6bd559d7-rx7m2   2/2     Running   0          3m4s   10.244.0.254   eksabm-testbed1-core-dev-node-0   <none>           <none>
 ```
 
 3. Deploy the proxy svc
@@ -88,28 +89,28 @@ kubectl create -f build/proxyApp/svc.yaml
 kubectl get svc
 
 NAME                       TYPE           CLUSTER-IP       EXTERNAL-IP                                   PORT(S)                               AGE
-proxy-svc                  ClusterIP      10.110.72.7      <none>                                        9092/TCP                              22m
+proxy-svc                  ClusterIP      10.108.215.193   <none>                                        9092/TCP                              3m52s
 ```
 
 4. Request to add all pod-urls to the proxy
 ```bash
-curl 10.110.72.7:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://10.244.0.32:9090"}' -w "\n"
+curl 10.108.215.193:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://10.244.0.4:9090"}' -w "\n"
 proxy registered
 
-curl 10.110.72.7:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://10.244.0.31:9090"}' -w "\n"
+curl 10.108.215.193:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://10.244.0.2:9090"}' -w "\n"
 proxy registered
 
-curl 10.110.72.7:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://10.244.0.30:9090"}' -w "\n"
+curl 10.108.215.193:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://10.244.0.3:9090"}' -w "\n"
 proxy registered
 ```
 
 5. Request to serve proxy
 ```bash
-curl 10.110.72.7:9092 -w "\n"
-responding from a simple rest app with pod name: rest-simple-app-964f5d5bd-q4m99
+curl 10.108.215.193:9092 -w "\n"
+responding from a simple rest app with pod name: rest-simple-app-6c9dc776f5-gwnvq
 
-curl 10.110.72.7:9092 -w "\n"
-responding from a simple rest app with pod name: rest-simple-app-964f5d5bd-q4m99
+curl 10.108.215.193:9092 -w "\n"
+responding from a simple rest app with pod name: rest-simple-app-6c9dc776f5-gwnvq
 ```
 
 Note: does not matter how many times you hit the proxy, request is redirected to same po [the first one all the time].
@@ -131,23 +132,23 @@ deployment.apps/proxy-app configured
 kubectl get po -l app=proxy-app
 
 NAME                        READY   STATUS    RESTARTS   AGE
-proxy-app-555465b5b-xwz42   2/2     Running   0          29s
+proxy-app-6c6bd559d7-rx7m2   2/2     Running   0          29s
 ```
 
 7. Repeat the 'addUrl' requests again
 
 ```bash
-curl 10.110.72.7:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://10.244.0.32:9090"}' -w "\n"
+curl 10.108.215.193:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://10.244.0.4:9090"}' -w "\n"
 proxy registered
 
-curl 10.110.72.7:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://10.244.0.31:9090"}' -w "\n"
+curl 10.108.215.193:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://10.244.0.3:9090"}' -w "\n"
 proxy registered
 
-curl 10.110.72.7:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://10.244.0.30:9090"}' -w "\n"
+curl 10.108.215.193:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://10.244.0.2:9090"}' -w "\n"
 proxy registered
 
 ## adding an invalid url
-curl 10.110.72.7:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://1.2.3.4:9090"}' -w "\n"
+curl 10.108.215.193:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://1.2.3.4:9090"}' -w "\n"
 proxy registered
 ```
 
@@ -155,26 +156,78 @@ proxy registered
 ```bash
 kubectl logs -f proxy-app-555465b5b-xwz42 -c proxy-app
 
-[GIN] 2023/04/14 - 18:32:10 | 200 |     744.334µs |       127.0.0.1 | POST     "/addurl"
-14047-09+00 47:23:23 -> url(http://10.244.0.32:9090) is available.
-[GIN] 2023/04/14 - 18:32:10 | 200 |      752.32µs |       127.0.0.1 | POST     "/addurl"
-14047-09+00 47:23:23 -> url(http://10.244.0.30:9090) is available.
-[GIN] 2023/04/14 - 18:32:10 | 200 |     298.483µs |       127.0.0.1 | POST     "/addurl"
-14047-09+00 47:23:23 -> url(http://1.2.3.4:9090) is unavailable.
-[GIN] 2023/04/14 - 18:32:11 | 200 |     358.927µs |       127.0.0.1 | POST     "/addurl"
-14047-09+00 47:23:23 -> url(http://10.244.0.31:9090) is available.
-14047-09+00 47:23:23 -> url(http://10.244.0.32:9090) is available.
-14047-09+00 47:23:23 -> url(http://10.244.0.30:9090) is available.
-14047-09+00 47:23:23 -> url(http://1.2.3.4:9090) is unavailable.
-14047-09+00 47:23:23 -> url(http://10.244.0.31:9090) is available.
-14047-09+00 47:23:23 -> url(http://10.244.0.32:9090) is available.
-14047-09+00 47:23:23 -> url(http://10.244.0.30:9090) is available.
-14047-09+00 47:23:23 -> url(http://1.2.3.4:9090) is unavailable.
-14047-09+00 47:23:23 -> url(http://10.244.0.31:9090) is available.
-14047-09+00 47:23:23 -> url(http://10.244.0.32:9090) is available.
-14047-09+00 47:23:23 -> url(http://10.244.0.30:9090) is available.
-14047-09+00 47:23:23 -> url(http://1.2.3.4:9090) is unavailable.
-14047-09+00 47:23:23 -> url(http://10.244.0.31:9090) is available.
-14047-09+00 47:23:23 -> url(http://10.244.0.32:9090) is available.
-14047-09+00 47:23:23 -> url(http://10.244.0.30:9090) is available.
+[GIN] 2023/04/16 - 12:33:08 | 200 |     420.363µs |       127.0.0.1 | POST     "/addurl"
+16047-09+00 47:23:23 -> url(http://10.244.0.3:9090) is available.
+[GIN] 2023/04/16 - 12:33:14 | 200 |    1.198732ms |       127.0.0.1 | POST     "/addurl"
+16047-09+00 47:23:23 -> url(http://10.244.0.4:9090) is available.
+16047-09+00 47:23:23 -> url(http://10.244.0.2:9090) is available.
+[GIN] 2023/04/16 - 12:33:19 | 200 |     292.743µs |       127.0.0.1 | POST     "/addurl"
+16047-09+00 47:23:23 -> url(http://10.244.0.3:9090) is available.
+16047-09+00 47:23:23 -> url(http://1.2.3.4:9090) is unavailable.
+[GIN] 2023/04/16 - 12:33:25 | 200 |     337.648µs |       127.0.0.1 | POST     "/addurl"
+16047-09+00 47:23:23 -> url(http://10.244.0.4:9090) is available.
+16047-09+00 47:23:23 -> url(http://10.244.0.2:9090) is available.
+16047-09+00 47:23:23 -> url(http://10.244.0.3:9090) is available.
+16047-09+00 47:23:23 -> url(http://1.2.3.4:9090) is unavailable.
+16047-09+00 47:23:23 -> url(http://10.244.0.4:9090) is available.
+16047-09+00 47:23:23 -> url(http://10.244.0.2:9090) is available.
+16047-09+00 47:23:23 -> url(http://10.244.0.3:9090) is available.
+16047-09+00 47:23:23 -> url(http://1.2.3.4:9090) is unavailable.
+16047-09+00 47:23:23 -> url(http://10.244.0.4:9090) is available.
+16047-09+00 47:23:23 -> url(http://10.244.0.2:9090) is available.
+16047-09+00 47:23:23 -> url(http://10.244.0.3:9090) is available.
+16047-09+00 47:23:23 -> url(http://1.2.3.4:9090) is unavailable.
+16047-09+00 47:23:23 -> url(http://10.244.0.4:9090) is available.
+16047-09+00 47:23:23 -> url(http://10.244.0.2:9090) is available.
+16047-09+00 47:23:23 -> url(http://10.244.0.3:9090) is available.
+16047-09+00 47:23:23 -> url(http://1.2.3.4:9090) is unavailable.
+16047-09+00 47:23:23 -> url(http://10.244.0.4:9090) is available.
+16047-09+00 47:23:23 -> url(http://10.244.0.2:9090) is available.
+16047-09+00 47:23:23 -> url(http://10.244.0.3:9090) is available.
+16047-09+00 47:23:23 -> url(http://1.2.3.4:9090) is unavailable.
 ```
+
+9. Lets deploy `hiteshpattanayak/proxy-app:3.0` which contains implementation of `round robin` load balancing strategy.
+
+10. Deploy the latest proxy app
+```bash
+kubectl apply -f build/proxyApp/deploy.yaml
+
+deployment.apps/proxy-app configured
+```
+
+11. Repeat the 'addUrl' requests again, we do this because we do not have a persistent stirage as yet.
+All the urls are stored in-memory.
+
+```bash
+curl 10.108.215.193:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://10.244.0.4:9090"}' -w "\n"
+proxy registered
+
+curl 10.108.215.193:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://10.244.0.3:9090"}' -w "\n"
+proxy registered
+
+curl 10.108.215.193:9092/addurl --header "Content-Type: application/json" --request "POST" --data '{"url": "http://10.244.0.2:9090"}' -w "\n"
+proxy registered
+```
+
+12. Request to serve proxy now
+
+```bash
+curl 10.108.215.193:9092 -w "\n"
+responding from a simple rest app with pod name: rest-simple-app-6c9dc776f5-vfnbx
+
+curl 10.108.215.193:9092 -w "\n"
+responding from a simple rest app with pod name: rest-simple-app-6c9dc776f5-hkp7w
+
+curl 10.108.215.193:9092 -w "\n"
+responding from a simple rest app with pod name: rest-simple-app-6c9dc776f5-gwnvq
+
+curl 10.108.215.193:9092 -w "\n"
+responding from a simple rest app with pod name: rest-simple-app-6c9dc776f5-vfnbx
+```
+
+Note: The load balancer redirects requests across pods in a round-robin manner.
+
+What if we could redirect requests in a weighted fashion?
+Could set an url's (server's) capability to handle more requests/load and the load balancer could redirect request based on that?
+Lets find out in the next steps.
