@@ -10,6 +10,14 @@ tasks:
       - go clean -testcache
       - rm -rf ./build/out
 
+  serve-restSimpleApp:
+    cmds:
+      - PORT=$PORT build/out/restSimpleApp
+
+  serve-proxyApp:
+    cmds:
+      - PROXY_PORT=$PROXY_PORT build/out/proxyApp
+
   compile-restSimpleApp:
     cmds:
       - go build -a -o ./build/out/restSimpleApp cmd/restSimpleApp/main.go
@@ -28,8 +36,8 @@ tasks:
 
   package-proxyApp:
     cmds:
-      - docker build --file build/proxyApp/Dockerfile -t hiteshpattanayak/proxy-app:2.0 .
+      - docker build --file build/proxyApp/Dockerfile -t hiteshpattanayak/proxy-app:3.0 .
 
   publish-proxyApp:
     cmds:
-      - docker push hiteshpattanayak/proxy-app:2.0
+      - docker push hiteshpattanayak/proxy-app:3.0

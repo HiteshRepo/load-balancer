@@ -5,7 +5,6 @@ import (
 	"net/http"
 	"net/url"
 	"os"
-	"sync/atomic"
 
 	"github.com/gin-gonic/gin"
 )
@@ -15,13 +14,10 @@ type backend struct {
 }
 
 type App struct {
-	proxies commonProxiesBunch
-	current int32
+	r RoundRobin
 }
 
 func (a *App) Start() {
-	a.proxies = make(commonProxiesBunch, 0)
-
 	router := gin.Default()
 	router.POST("/addurl", a.addproxy)
 	router.GET("/", a.serveproxy)
@@ -49,16 +45,13 @@ func (a *App) addproxy(c *gin.Context) {
 		return
 	}
 
-	p := NewProxy(v)
-
-	a.proxies = append(a.proxies, p)
-	atomic.AddInt32(&a.current, 1)
+	a.r.Add(v)
 
 	c.String(http.StatusOK, "proxy registered")
 }
 
 func (a *App) serveproxy(c *gin.Context) {
-	p, err := getAvailableProxy(a.proxies, 0)
+	p, err := a.r.Next()
 	if err != nil {
 		c.String(http.StatusServiceUnavailable, err.Error())
 		return

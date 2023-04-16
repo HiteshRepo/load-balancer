@@ -14,5 +14,5 @@ spec:
     spec:
       containers:
         - name: proxy-app
-          image: hiteshpattanayak/proxy-app:2.0
+          image: hiteshpattanayak/proxy-app:3.0
           imagePullPolicy: Always
