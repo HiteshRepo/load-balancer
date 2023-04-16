@@ -7,6 +7,7 @@ import (
 	"os"
 
 	"github.com/gin-gonic/gin"
+	loadbalancers "github.com/hiteshrepo/load-balancer/internal/proxy/loadBalancers"
 )
 
 type backend struct {
@@ -14,7 +15,7 @@ type backend struct {
 }
 
 type App struct {
-	r RoundRobin
+	r loadbalancers.RoundRobin
 }
 
 func (a *App) Start() {

@@ -1,4 +1,4 @@
-package proxy
+package types
 
 import (
 	"net/http"

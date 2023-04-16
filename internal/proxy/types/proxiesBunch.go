@@ -1,4 +1,4 @@
-package proxy
+package types
 
 import (
 	"fmt"
@@ -9,7 +9,7 @@ type proxiesBunch interface {
 	Get(idx int) *Proxy
 }
 
-func getAvailableProxy(proxies proxiesBunch, marker int) (*Proxy, error) {
+func GetAvailableProxy(proxies proxiesBunch, marker int) (*Proxy, error) {
 	for i := 0; i < proxies.Len(); i++ {
 		tryProxy := (marker + i) % proxies.Len()
 		p := proxies.Get(tryProxy)
@@ -20,7 +20,7 @@ func getAvailableProxy(proxies proxiesBunch, marker int) (*Proxy, error) {
 	return nil, fmt.Errorf("all proxies are unavailable")
 }
 
-type commonProxiesBunch []*Proxy
+type CommonProxiesBunch []*Proxy
 
-func (b commonProxiesBunch) Len() int           { return len(b) }
-func (b commonProxiesBunch) Get(idx int) *Proxy { return b[idx] }
+func (b CommonProxiesBunch) Len() int           { return len(b) }
+func (b CommonProxiesBunch) Get(idx int) *Proxy { return b[idx] }
