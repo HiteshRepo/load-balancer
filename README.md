@@ -29,7 +29,7 @@ Note: skip steps #1, #2 and #3 since, the app's image has already been pushed to
 
 5. Deploy the app
 ```bash
-kubectl create -f build/restSimpleApp-deploy.yaml
+kubectl create -f build/restSimpleApp/deploy.yaml
 ```
 
 6. Get the pods
@@ -72,7 +72,7 @@ Note: skip steps #1 since, the app's image has already been pushed to dockerhub.
 2. Deploy the proxy app
 
 ```bash
-kubectl create -f proxyApp-deploy.yaml
+kubectl create -f build/proxyApp/deploy.yaml
 
 kubectl get po -o wide -l app=proxy-app
 
@@ -83,7 +83,7 @@ proxy-app-784f88697-lnfj8   2/2     Running   0          22m   10.244.0.187   ek
 3. Deploy the proxy svc
 
 ```bash
-kubectl create -f proxyApp-svc.yaml
+kubectl create -f build/proxyApp/svc.yaml
 
 kubectl get svc
 
@@ -124,7 +124,7 @@ Also the image has been updated in 'proxyApp-deploy.yaml'.
 
 Deploy the latest proxy app
 ```bash
-kubectl apply -f proxyApp-deploy.yaml
+kubectl apply -f build/proxyApp/deploy.yaml
 
 deployment.apps/proxy-app configured
 

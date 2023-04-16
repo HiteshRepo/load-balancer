@@ -16,7 +16,7 @@ tasks:
 
   package-restSimpleApp:
     cmds:
-      - docker build --file build/Dockerfile.restSimpleApp -t hiteshpattanayak/rest-simple-app:2.0 .
+      - docker build --file build/restSimpleApp/Dockerfile -t hiteshpattanayak/rest-simple-app:2.0 .
 
   publish-restSimpleApp:
     cmds:
@@ -28,7 +28,7 @@ tasks:
 
   package-proxyApp:
     cmds:
-      - docker build --file build/Dockerfile.proxyApp -t hiteshpattanayak/proxy-app:2.0 .
+      - docker build --file build/proxyApp/Dockerfile -t hiteshpattanayak/proxy-app:2.0 .
 
   publish-proxyApp:
     cmds:
